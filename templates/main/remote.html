@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>My Playground</title>
+        <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+    </head>
+    <body>
+    <div class="remote_control">
+        <button class="button" id="btn-a1">Запуск</button>
+        <script>
+        document.getElementById('btn-a1').addEventListener('click', async () => {
+            await fetch('/remote/', {
+            method: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'a1=launch'
+        });
+    });
+</script>
+    </div>
+
+</body>
+</html>

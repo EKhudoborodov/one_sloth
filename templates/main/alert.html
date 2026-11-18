@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Alert</title>
+    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+</head>
+<body>
+    <!-- Контейнер-виджет заданной ширины -->
+    <div class="widget" style="width: 400px; margin: 0 auto; position: relative; overflow: hidden;">
+        <div class="alert-handler" id="alert-box"></div>
+    </div>
+
+    <audio id="achievement-sound" src="{% static 'main/sounds/desktop_toast_default.wav' %}" preload="auto"></audio>
+
+    <script>
+        const alertBox = document.getElementById('alert-box');
+        const sound = document.getElementById('achievement-sound');
+        const imgUrl = "{% static 'main/img/test.png' %}";
+
+        // Разблокировка звука при первом клике по странице (без кнопки)
+        document.body.addEventListener('click', function unlockAudio() {
+            sound.volume = 0;
+            sound.play().then(() => {
+                sound.pause();
+                sound.volume = 1;
+            }).catch(() => {});
+        }, { once: true });
+
+        // Подключение к WebSocket (wss:// при HTTPS)
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+        const ws = new WebSocket(wsProtocol + window.location.host + '/ws/alert/');
+
+         ws.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+    if (data.type === 'alert') {
+        alertBox.innerHTML = `<img src="${imgUrl}" class="achievement-popup" alt="Achievement">`;
+        const img = alertBox.querySelector('.achievement-popup');
+        img.style.animation = 'none';
+        void img.offsetWidth;
+        img.style.animation = '';
+
+        sound.currentTime = 0;
+        sound.play().catch(err => console.log('Sound blocked:', err));
+
+        setTimeout(() => {
+            const img = alertBox.querySelector('.achievement-popup');
+            if (img) {
+                img.classList.add('hide');
+                setTimeout(() => { alertBox.innerHTML = ''; }, 400);
+            }
+        }, 3000);
+    }
+};
+    </script>
+</body>
+</html>
