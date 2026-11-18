@@ -1,36 +1,42 @@
-.widget {
-    width: 400px;
-    margin: 0 auto;
-    position: relative;
+/* Убираем любые отступы у страницы, чтобы картинка прилегала к краям */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent; /* Прозрачный фон для OBS */
     overflow: hidden;
-    min-height: 200px; /* чтобы было куда выезжать */
 }
 
+/* Контейнер для ачивки */
 .alert-handler {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
+    position: fixed;
+    bottom: 0;               /* Прижимаем к самому низу */
+    left: 0;                 /* Начинаем от левого края */
+    width: 100%;             /* Растягиваем на всю ширину экрана */
     z-index: 9999;
     pointer-events: none;
+    display: flex;           /* Используем flex для центрирования */
+    justify-content: center; /* Центрируем картинку по горизонтали */
 }
 
+/* Сама картинка */
 .achievement-popup {
     display: block;
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    border-radius: 8px 8px 0 0;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
-    animation: slideUp 0.45s ease-out;
+    width: 100%;             /* Картинка займет 100% ширины контейнера (т.е. всего экрана) */
+    height: auto;            /* Высота подстраивается */
+    border-radius: 12px 12px 0 0; /* Скругляем верхние углы */
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.6); /* Тень вверх */
+    animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+/* Анимация выезда снизу вверх */
 @keyframes slideUp {
     from { transform: translateY(100%); opacity: 0; }
     to   { transform: translateY(0);    opacity: 1; }
 }
 
+/* Анимация уезда вниз */
 .achievement-popup.hide {
     animation: slideDown 0.4s ease-in forwards;
 }
