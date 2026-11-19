@@ -6,25 +6,21 @@
     <title>Alert</title>
     <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
 </head>
-<!-- Обязательно добавьте style="background-color: transparent;" для OBS -->
 <body style="background-color: transparent; margin: 0; overflow: hidden;">
 
-    <!-- Контейнер для ачивки -->
     <div class="alert-handler" id="alert-box"></div>
-
     <audio id="achievement-sound" src="{% static 'main/sounds/desktop_toast_default.wav' %}" preload="auto"></audio>
 
     <script>
         const alertBox = document.getElementById('alert-box');
         const sound = document.getElementById('achievement-sound');
-        const imgUrl = "{% static 'main/img/test.png' %}";
+
+        // Базовый URL для картинок (без имени файла)
+        const imgBaseUrl = "{% static 'main/img/' %}";
 
         document.body.addEventListener('click', function unlockAudio() {
             sound.volume = 0;
-            sound.play().then(() => {
-                sound.pause();
-                sound.volume = 1;
-            }).catch(() => {});
+            sound.play().then(() => { sound.pause(); sound.volume = 1; }).catch(() => {});
         }, { once: true });
 
         const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
@@ -33,6 +29,9 @@
         ws.onmessage = (e) => {
             const data = JSON.parse(e.data);
             if (data.type === 'alert') {
+                // Формируем имя файла: test1.png, test2.png или test3.png
+                const imgUrl = imgBaseUrl + data.achievement_id + '.png';
+
                 alertBox.innerHTML = `<img src="${imgUrl}" class="achievement-popup" alt="Achievement">`;
                 const img = alertBox.querySelector('.achievement-popup');
                 img.style.animation = 'none';

@@ -1,24 +1,79 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>My Playground</title>
-        <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
-    </head>
-    <body>
+<head>
+    <meta charset="utf-8" />
+    <title>Remote</title>
+    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+</head>
+<body>
     <div class="remote_control">
-        <button class="button" id="btn-a1">Запуск</button>
-        <script>
-        document.getElementById('btn-a1').addEventListener('click', async () => {
-            await fetch('/remote/', {
-            method: 'POST',
-            headers: {'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded'},
-            body: 'a1=launch'
-        });
-    });
-</script>
+        <form id="remote-form">
+            {% csrf_token %}
+            <!-- Выпадающий список -->
+            <select name="achievement_id" id="achievement-select" class="styled-select">
+                <option value="0">Тестовое</option>
+                <option value="1">Чатерское 1</option>
+                <option value="2">Чатерское 2</option>
+                <option value="3">Чатерское 3</option>
+                <option value="4">Чатерское 4</option>
+                <option value="5">Чатерское 5</option>
+                <option value="6">Чатерское 6</option>
+                <option value="7">Чатерское 7</option>
+                <option value="8">Чатерское 8</option>
+                <option value="9">Чатерское 9</option>
+                <option value="10">Игровое 10</option>
+                <option value="11">Игровое 1</option>
+                <option value="12">Игровое 2</option>
+                <option value="13">Игровое 3</option>
+                <option value="14">Игровое 4</option>
+                <option value="15">Игровое 5</option>
+                <option value="16">Игровое 6</option>
+                <option value="17">Игровое 7</option>
+                <option value="18">Игровое 8</option>
+                <option value="19">Игровое 9</option>
+                <option value="20">Игровое 10</option>
+                <option value="21">Смайликовое 1</option>
+                <option value="22">Смайликовое 2</option>
+                <option value="23">Смайликовое 3</option>
+                <option value="24">Смайликовое 4</option>
+                <option value="25">Смайликовое 5</option>
+                <option value="26">Смайликовое 6</option>
+                <option value="27">Смайликовое 7</option>
+                <option value="28">Смайликовое 8</option>
+                <option value="29">Смайликовое 9</option>
+                <option value="30">Смайликовое 10</option>
+            </select>
+
+            <!-- Кнопка отправки -->
+            <button type="submit" class="button" name="a1" value="launch">Запуск</button>
+        </form>
     </div>
 
+    <script>
+        document.getElementById('remote-form').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Отменяем стандартную отправку формы (перезагрузку страницы)
+
+            const selectedId = document.getElementById('achievement-select').value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            // Отправляем данные на сервер через Fetch API
+            const response = await fetch('/remote/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `achievement_id=${selectedId}&a1=launch`
+            });
+
+            if (response.ok) {
+                // Можно добавить визуальный отклик, например, мигание кнопки
+                const btn = document.querySelector('.button');
+                btn.style.backgroundColor = '#4CAF50';
+                setTimeout(() => btn.style.backgroundColor = '', 300);
+            }
+        });
+    </script>
 </body>
 </html>
